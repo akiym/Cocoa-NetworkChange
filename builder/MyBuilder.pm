@@ -19,7 +19,6 @@ sub new {
 sub compile_c {
     my ($self, $file, %args) = @_;
 
-    warn $file;
     (my $m_file = $file) =~ s/\.c$/.m/;
     move($file, $m_file) or die $!;
 
