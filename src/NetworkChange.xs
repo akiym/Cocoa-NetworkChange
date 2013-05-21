@@ -13,7 +13,6 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreWLAN/CoreWLAN.h>
-#import <objc/runtime.h>
 
 #import "Reachability.h"
 
