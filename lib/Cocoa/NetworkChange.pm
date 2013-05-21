@@ -6,7 +6,7 @@ use parent qw/Exporter/;
 
 our $VERSION = "0.01";
 
-our @EXPORT = qw/on_network_change/;
+our @EXPORT = qw/on_network_change is_network_connected/;
 
 use XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);

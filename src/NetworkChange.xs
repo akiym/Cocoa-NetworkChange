@@ -82,3 +82,22 @@ CODE:
 
     [pool drain];
 }
+
+int
+is_network_connected()
+CODE:
+{
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
+    Reachability* reach = [Reachability reachabilityForInternetConnection];
+
+    if ([reach isReachable]) {
+        RETVAL = 1;
+    } else {
+        RETVAL = 0;
+    }
+
+    [pool drain];
+}
+OUTPUT:
+    RETVAL
