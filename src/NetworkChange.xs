@@ -16,6 +16,28 @@
 
 #import "Reachability.h"
 
+static HV*
+current_interface() {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
+    CWInterface* currentInterface = [CWInterface interfaceWithName:nil];
+
+    SV* sv_ssid = sv_2mortal(newSV(0));
+    SV* sv_interface_name = sv_2mortal(newSV(0));
+    SV* sv_hardware_address = sv_2mortal(newSV(0));
+    sv_setpv(sv_ssid, [[currentInterface ssid] UTF8String]);
+    sv_setpv(sv_interface_name, [[currentInterface interfaceName] UTF8String]);
+    sv_setpv(sv_hardware_address, [[currentInterface hardwareAddress] UTF8String]);
+
+    [pool drain];
+
+    HV* sv_interface = (HV*)sv_2mortal((SV*)newHV());
+    (void)hv_store(sv_interface, "ssid", 4, sv_ssid, 0);
+    (void)hv_store(sv_interface, "interface", 9, sv_interface_name, 0);
+    (void)hv_store(sv_interface, "mac_address", 11, sv_hardware_address, 0);
+    return sv_interface;
+}
+
 MODULE = Cocoa::NetworkChange    PACKAGE = Cocoa::NetworkChange
 
 PROTOTYPES: DISABLE
@@ -34,20 +56,7 @@ CODE:
     Reachability* reach = [Reachability reachabilityForInternetConnection];
     reach.reachableBlock = ^(Reachability* reach){
         dispatch_sync(dispatch_get_main_queue(), ^{
-            CWInterface* currentInterface = [CWInterface interfaceWithName:nil];
-
-            SV* sv_ssid = sv_2mortal(newSV(0));
-            SV* sv_interface_name = sv_2mortal(newSV(0));
-            SV* sv_hardware_address = sv_2mortal(newSV(0));
-            sv_setpv(sv_ssid, [[currentInterface ssid] UTF8String]);
-            sv_setpv(sv_interface_name, [[currentInterface interfaceName] UTF8String]);
-            sv_setpv(sv_hardware_address, [[currentInterface hardwareAddress] UTF8String]);
-
-            HV* sv_interface = (HV*)sv_2mortal((SV*)newHV());
-            (void)hv_store(sv_interface, "ssid", 4, sv_ssid, 0);
-            (void)hv_store(sv_interface, "interface", 9, sv_interface_name, 0);
-            (void)hv_store(sv_interface, "mac_address", 11, sv_hardware_address, 0);
-
+            HV* hv_interface = current_interface();
             SV* connect_cb = get_sv("Cocoa::NetworkChange::__connect_cb", 0);
             if (connect_cb) {
                 dSP;
@@ -55,7 +64,7 @@ CODE:
                 SAVETMPS;
 
                 PUSHMARK(SP);
-                XPUSHs(sv_2mortal(newRV_inc((SV*)sv_interface)));
+                XPUSHs(sv_2mortal(newRV_inc((SV*)hv_interface)));
                 PUTBACK;
 
                 call_sv(connect_cb, G_SCALAR);
