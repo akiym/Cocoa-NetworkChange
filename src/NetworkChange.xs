@@ -6,9 +6,6 @@
 #define NEED_newSVpvn_flags
 #include "ppport.h"
 
-#include <notify.h>
-#include <notify_keys.h>
-
 #undef Move
 
 #import <Foundation/Foundation.h>
