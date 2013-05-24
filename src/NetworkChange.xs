@@ -78,11 +78,18 @@ CODE:
         dispatch_sync(dispatch_get_main_queue(), ^{
             SV* disconnect_cb = get_sv("Cocoa::NetworkChange::__disconnect_cb", 0);
             if (disconnect_cb) {
+                dSP;
                 ENTER;
                 SAVETMPS;
 
+                PUSHMARK(SP);
+                PUTBACK;
+
                 call_sv(disconnect_cb, G_SCALAR);
 
+                SPAGAIN;
+
+                PUTBACK;
                 FREETMPS;
                 LEAVE;
             }
