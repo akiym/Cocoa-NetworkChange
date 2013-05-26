@@ -22,9 +22,11 @@ current_interface() {
     SV* sv_ssid = sv_2mortal(newSV(0));
     SV* sv_interface_name = sv_2mortal(newSV(0));
     SV* sv_hardware_address = sv_2mortal(newSV(0));
+    SV* sv_bssid = sv_2mortal(newSV(0));
     sv_setpv(sv_ssid, [[currentInterface ssid] UTF8String]);
     sv_setpv(sv_interface_name, [[currentInterface interfaceName] UTF8String]);
     sv_setpv(sv_hardware_address, [[currentInterface hardwareAddress] UTF8String]);
+    sv_setpv(sv_bssid, [[currentInterface bssid] UTF8String]);
 
     [pool drain];
 
@@ -32,6 +34,7 @@ current_interface() {
     (void)hv_store(sv_interface, "ssid", 4, sv_ssid, 0);
     (void)hv_store(sv_interface, "interface", 9, sv_interface_name, 0);
     (void)hv_store(sv_interface, "mac_address", 11, sv_hardware_address, 0);
+    (void)hv_store(sv_interface, "bssid", 5, sv_bssid, 0);
     return sv_interface;
 }
 
