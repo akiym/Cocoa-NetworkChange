@@ -19,10 +19,10 @@ current_interface() {
 
     CWInterface* currentInterface = [CWInterface interfaceWithName:nil];
 
-    SV* sv_ssid = sv_2mortal(newSV(0));
-    SV* sv_interface_name = sv_2mortal(newSV(0));
-    SV* sv_hardware_address = sv_2mortal(newSV(0));
-    SV* sv_bssid = sv_2mortal(newSV(0));
+    SV* sv_ssid = newSV(0);
+    SV* sv_interface_name = newSV(0);
+    SV* sv_hardware_address = newSV(0);
+    SV* sv_bssid = newSV(0);
     sv_setpv(sv_ssid, [[currentInterface ssid] UTF8String]);
     sv_setpv(sv_interface_name, [[currentInterface interfaceName] UTF8String]);
     sv_setpv(sv_hardware_address, [[currentInterface hardwareAddress] UTF8String]);
