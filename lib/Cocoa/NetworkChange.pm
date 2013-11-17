@@ -45,7 +45,7 @@ Note that if you disconnected with PPPoE authentication, Cocoa::NetworkChange gu
 
 =head1 FUNCTIONS
 
-=head2 on_network_change($connect_cb, $disconnect_cb)
+=head2 on_network_change($connect_cb, [$disconnect_cb])
 
 Call the callback on network connected or disconnected.
 

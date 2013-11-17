@@ -43,13 +43,16 @@ MODULE = Cocoa::NetworkChange    PACKAGE = Cocoa::NetworkChange
 PROTOTYPES: DISABLE
 
 void
-on_network_change(SV* sv_connect_cb, SV* sv_disconnect_cb)
-CODE:
+on_network_change(SV* sv_connect_cb, ...)
+PPCODE:
 {
     SV* connect_cb = get_sv("Cocoa::NetworkChange::__connect_cb", GV_ADD);
     sv_setsv(connect_cb, sv_connect_cb);
-    SV* disconnect_cb = get_sv("Cocoa::NetworkChange::__disconnect_cb", GV_ADD);
-    sv_setsv(disconnect_cb, sv_disconnect_cb);
+
+    if (items > 1) {
+        SV* disconnect_cb = get_sv("Cocoa::NetworkChange::__disconnect_cb", GV_ADD);
+        sv_setsv(disconnect_cb, ST(1));
+    }
 
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
