@@ -13,29 +13,23 @@
 
 #import "Reachability.h"
 
-static HV*
-current_interface() {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+static inline SV*
+nsstring_to_sv(NSString* str) {
+    SV* sv = sv_2mortal(newSV(0));
+    sv_setpv(sv, [str UTF8String]);
+    return sv;
+}
 
-    CWInterface* currentInterface = [CWInterface interfaceWithName:nil];
-
-    SV* sv_ssid = newSV(0);
-    SV* sv_interface_name = newSV(0);
-    SV* sv_hardware_address = newSV(0);
-    SV* sv_bssid = newSV(0);
-    sv_setpv(sv_ssid, [[currentInterface ssid] UTF8String]);
-    sv_setpv(sv_interface_name, [[currentInterface interfaceName] UTF8String]);
-    sv_setpv(sv_hardware_address, [[currentInterface hardwareAddress] UTF8String]);
-    sv_setpv(sv_bssid, [[currentInterface bssid] UTF8String]);
-
-    [pool drain];
-
-    HV* sv_interface = (HV*)sv_2mortal((SV*)newHV());
-    (void)hv_store(sv_interface, "ssid", 4, sv_ssid, 0);
-    (void)hv_store(sv_interface, "interface", 9, sv_interface_name, 0);
-    (void)hv_store(sv_interface, "mac_address", 11, sv_hardware_address, 0);
-    (void)hv_store(sv_interface, "bssid", 5, sv_bssid, 0);
-    return sv_interface;
+static void
+set_current_interface(CWInterface* interface, HV* hv_interface) {
+    (void)hv_store(hv_interface, "ssid", 4,
+        newRV_inc(nsstring_to_sv([interface ssid])), 0);
+    (void)hv_store(hv_interface, "interface", 9,
+        newRV_inc(nsstring_to_sv([interface interfaceName])), 0);
+    (void)hv_store(hv_interface, "mac_address", 11,
+        newRV_inc(nsstring_to_sv([interface hardwareAddress])), 0);
+    (void)hv_store(hv_interface, "bssid", 5,
+        newRV_inc(nsstring_to_sv([interface bssid])), 0);
 }
 
 MODULE = Cocoa::NetworkChange    PACKAGE = Cocoa::NetworkChange
@@ -59,7 +53,10 @@ PPCODE:
     Reachability* reach = [Reachability reachabilityForInternetConnection];
     reach.reachableBlock = ^(Reachability* reach){
         dispatch_sync(dispatch_get_main_queue(), ^{
-            HV* hv_interface = current_interface();
+            CWInterface* currentInterface = [CWInterface interfaceWithName:nil];
+            HV* hv_interface = (HV*)sv_2mortal((SV*)newHV());
+            set_current_interface(currentInterface, hv_interface);
+
             SV* connect_cb = get_sv("Cocoa::NetworkChange::__connect_cb", 0);
             if (connect_cb) {
                 dSP;
