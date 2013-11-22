@@ -122,3 +122,19 @@ CODE:
 }
 OUTPUT:
     RETVAL
+
+SV*
+current_interface()
+CODE:
+{
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
+    CWInterface* currentInterface = [CWInterface interfaceWithName:nil];
+    HV* hv_interface = (HV*)sv_2mortal((SV*)newHV());
+    set_current_interface(currentInterface, hv_interface);
+
+    [pool drain];
+
+    ST(0) = sv_2mortal(newRV_inc((SV*)hv_interface));
+    XSRETURN(1);
+}
