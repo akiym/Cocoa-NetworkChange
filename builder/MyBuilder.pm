@@ -4,6 +4,9 @@ use warnings;
 use parent qw(Module::Build);
 use File::Copy;
 
+# check OS and version
+die 'OS unsupported' unless ($^O eq 'darwin');
+
 sub new {
     my ($self, %args) = @_;
     $self->SUPER::new(
