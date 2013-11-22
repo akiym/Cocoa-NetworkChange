@@ -45,7 +45,9 @@ Note that if you disconnected with PPPoE authentication, Cocoa::NetworkChange gu
 
 =head1 FUNCTIONS
 
-=head2 on_network_change($connect_cb, [$disconnect_cb])
+=over 4
+
+=item C<< on_network_change($connect_cb, [$disconnect_cb]) >>
 
 Call the callback on network connected or disconnected.
 
@@ -58,23 +60,33 @@ Call the callback on network connected or disconnected.
 
 =over 4
 
-=item $wlan->{ssid}
+=item C<< $wlan->{ssid} >>
 
-SSID
+Service set identifier (SSID)
 
-=item $wlan->{interface}
+=item C<< $wlan->{interface} >>
 
-Interface name (such as en0, en1)
+The BSD name of the interface (such as en0, en1)
 
-=item $wlan->{mac_address}
+=item C<< $wlan->{mac_address} >>
 
-MAC address
+The hardware media access control (MAC) address
+
+=item C<< $wlan->{bssid} >>
+
+Basic service set identifier (BSSID)
 
 =back
 
-=head2 is_network_connected()
+=item C<< is_network_connected() >>
 
 (immediately) Return 1, when you are connected to the network and 0 otherwise.
+
+=item C<< current_interface() >>
+
+See above.
+
+=back
 
 =head1 LICENSE
 
