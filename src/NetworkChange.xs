@@ -23,13 +23,13 @@ nsstring_to_sv(NSString* str) {
 static void
 set_current_interface(CWInterface* interface, HV* hv_interface) {
     (void)hv_store(hv_interface, "ssid", 4,
-        newRV_inc(nsstring_to_sv([interface ssid])), 0);
+        SvREFCNT_inc(nsstring_to_sv([interface ssid])), 0);
     (void)hv_store(hv_interface, "interface", 9,
-        newRV_inc(nsstring_to_sv([interface interfaceName])), 0);
+        SvREFCNT_inc(nsstring_to_sv([interface interfaceName])), 0);
     (void)hv_store(hv_interface, "mac_address", 11,
-        newRV_inc(nsstring_to_sv([interface hardwareAddress])), 0);
+        SvREFCNT_inc(nsstring_to_sv([interface hardwareAddress])), 0);
     (void)hv_store(hv_interface, "bssid", 5,
-        newRV_inc(nsstring_to_sv([interface bssid])), 0);
+        SvREFCNT_inc(nsstring_to_sv([interface bssid])), 0);
 }
 
 MODULE = Cocoa::NetworkChange    PACKAGE = Cocoa::NetworkChange
